@@ -46,8 +46,8 @@ for s = 1:length(subFolders)
     SubjStruct.ORGinv=invcountmtx;
     SubjStruct.tckdistmat=lengthmtx;
     
-    BrainMask = load_untouch_nii([currentSubjDir '/' 'biasb0brain_mask.nii']);
-    SubjStruct.BrainSize = numel(find(BrainMask.img~=0));
+    %BrainMask = load_untouch_nii([currentSubjDir '/' 'biasb0brain_mask.nii']);
+    %SubjStruct.BrainSize = numel(find(BrainMask.img~=0));
     
     [rois, ~] = extract_roi([currentSubjDir '/' parcname '' '.nii']);
     SubjStruct.distmat = zeros(parcnum, parcnum);
