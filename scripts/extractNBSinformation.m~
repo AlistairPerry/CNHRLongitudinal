@@ -10,7 +10,6 @@ numsubjs=size(connectivitymatrices,3);
 %extract subject connectivity weights
 
 for i = 1:length(nbs.NBS.con_mat(1,:))
-    NBSweights=[];
     [xcol, ycol] = find(nbs.NBS.con_mat{1,i});
     for k = 1:length(xcol)
         NBSweights(:,k)=squeeze(connectivitymatrices(xcol(k,1),ycol(k,1),:));
