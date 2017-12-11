@@ -26,6 +26,9 @@ for s = 1:length(subFolders)
     invcountfile = dir(fullfile(currentSubjDir, '*invlengths*'));
     invcountmtx = dlmread([currentSubjDir '/' invcountfile.name]);
     
+    invnodelengthfile = dir(fullfile(currentSubjDir, '*invnodeandlengths*'));
+    invnodelengthmtx = dlmread([currentSubjDir '/' invnodelengthfile.name]);
+    
     lengthfile = dir(fullfile(currentSubjDir, '*tracklengths*'));
     lengthmtx = dlmread([currentSubjDir '/' lengthfile.name]);
     
@@ -37,6 +40,7 @@ for s = 1:length(subFolders)
         countmtx(j,i) = countmtx(i,j);
         lengthmtx(j,i) = lengthmtx(i,j);
         invcountmtx(j,i)=invcountmtx(i,j);
+        invnodelengthmtx(j,i)=invnodelengthmtx(i,j);
         end
     end
     
@@ -44,6 +48,7 @@ for s = 1:length(subFolders)
     
     SubjStruct.ORG=countmtx;
     SubjStruct.ORGinv=invcountmtx;
+    SubjStruct.ORGinvnodelength=invnodelengthmtx;
     SubjStruct.tckdistmat=lengthmtx;
     
     %BrainMask = load_untouch_nii([currentSubjDir '/' 'biasb0brain_mask.nii']);
