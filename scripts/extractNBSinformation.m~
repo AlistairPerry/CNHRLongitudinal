@@ -48,7 +48,7 @@ end
 fclose(fid)
 
 %option to load in apriori information of network nodes
-if ~isempty(varargin)
+while ~isempty(varargin)
 
         nodeindex=varargin{1};
         netlabels=varargin{2};
@@ -60,19 +60,24 @@ if ~isempty(varargin)
         
         netNBSmat=zeros(max(nodeindex),max(nodeindex));
         
-        for x = 1:length(xindex)
+        for x = 1:xindex
             netNBSmat(xindex(x),yindex(x))=netNBSmat(xindex(x),yindex(x))+1;
             netNBSmat(yindex(x),xindex(x))=netNBSmat(yindex(x),xindex(x))+1;
         end
         
-        netNBSmatl=triu(logical(ones(size(netNBSmat))));
-        netNBSmat(~netNBSmatl)=nan;
+        netNBSmat=triu(logical(ones(size(netNBSmat))));
+        netNBSmat(~netNBSmat)=nan;
         heatmap(netNBSmat,netlabels,netlabels,'','GridLines','none', 'NanColor',[1 1 1]);
        
         c=colorbar;
         ylabel(c,'Number of edges');
+        ax = gca;
+        ax.TickDir = 'both';
+        ax.FontWeight = 'bold';
+        ax.FontSize = 12;
+        box off
         
-        savefig([basefilename '' int2str(i) 'Net.fig']);
+        
     
     end
 end
