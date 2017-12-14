@@ -1,4 +1,4 @@
-function [NBSweightssum]=extractNBSinformation(nbsfile, connectivitymatrices, AALstrings, COG, basefilename, varargin)
+function [NBSweightssum]=extractNBSinformation(nbsfile, connectivitymatrices, parcstrings, COG, basefilename, varargin)
 
 load(nbsfile);
 nbstab = [];
@@ -29,14 +29,14 @@ for i = 1:length(nbs.NBS.con_mat(1,:))
             nbstab(1,1) = i;
             nbstab(1,2) = xcol(k,1);
             nbstab(1,3) = ycol(k,1);
-            nbscell(1,1) = AALstrings(xcol(k,1), 1);
-            nbscell(1,2) = AALstrings(ycol(k,1), 1);
+            nbscell(1,1) = parcstrings(xcol(k,1), 1);
+            nbscell(1,2) = parcstrings(ycol(k,1), 1);
         else
             nbstab(numel(nbstab(:,1))+1, 1) = i;
             nbstab(numel(nbstab(:,2)), 2) = xcol(k,1);
             nbstab(numel(nbstab(:,3)), 3) = ycol(k,1);
-            nbscell(numel(nbscell(:,1))+1,1) = {AALstrings{xcol(k,1), 1}};
-            nbscell(numel(nbscell(:,2)), 2) = {AALstrings{ycol(k,1), 1}};
+            nbscell(numel(nbscell(:,1))+1,1) = {parcstrings{xcol(k,1), 1}};
+            nbscell(numel(nbscell(:,2)), 2) = {parcstrings{ycol(k,1), 1}};
         end
     end
 end
