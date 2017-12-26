@@ -14,7 +14,7 @@ for i = 1:length(nbs.NBS.con_mat(1,:))
     [xcol, ycol] = find(nbs.NBS.con_mat{1,i});
     for k = 1:length(xcol)
         NBSweights(:,k)=squeeze(connectivitymatrices(xcol(k,1),ycol(k,1),:));
-        NBSweightssum(:,1)=sum(NBSweights,2);
+        NBSweightssum(:,i)=sum(NBSweights,2);
     end
 end
 
@@ -55,8 +55,9 @@ if ~isempty(varargin)
     
     for i = 1:length(nbs.NBS.con_mat(1,:))
         
-        xindex=nodeindex(nbstab(:,2),1);
-        yindex=nodeindex(nbstab(:,3),1);
+        [xcol, ycol] = find(nbs.NBS.con_mat{1,i});
+        xindex=nodeindex(xcol,1);
+        yindex=nodeindex(ycol,1);
         
         netNBSmat=zeros(max(nodeindex),max(nodeindex));
         
