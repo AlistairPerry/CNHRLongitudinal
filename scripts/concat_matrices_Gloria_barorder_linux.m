@@ -1,4 +1,4 @@
-function [output,subjs] = concat_matrices_Gloria_barorder(textfilename, sparsity)
+function [output,subjs] = concat_matrices_Gloria_barorder_linux(textfilename, sparsity)
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -11,8 +11,8 @@ subjs=textread([textfilename],'%s');
 
 for s = 1:length(subjs)
 currentSubj = subjs{s,1};
-currentSubjDir = char([workingdirectory '\' currentSubj]);
-load([currentSubjDir '\' sparsity '\' currentSubj '' 'metrics.mat']); %Matrix file containing information of each subject
+currentSubjDir = char([workingdirectory '/' currentSubj]);
+load([currentSubjDir '/' sparsity '/' currentSubj '' 'metrics.mat']); %Matrix file containing information of each subject
 output(:,:,s) = SubjStruct.thr; %Matlab field representing connectivity matrix
 end
 
