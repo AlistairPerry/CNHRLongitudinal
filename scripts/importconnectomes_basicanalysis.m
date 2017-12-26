@@ -67,7 +67,7 @@ for s = 1:length(subFolders)
 
     normtype=varargin{1};   
     
-    SubjStruct.thr = threshold_proportional(['SubjStruct.ORG' normtype], (sparsity./100));
+    SubjStruct.thr = threshold_proportional(SubjStruct.(normtype), (sparsity./100));
         
     else
         
