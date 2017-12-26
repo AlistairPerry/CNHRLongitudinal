@@ -12,7 +12,7 @@ subjs=textread([textfilename],'%s');
 for s = 1:length(subjs)
 currentSubj = subjs{s,1};
 currentSubjDir = char([workingdirectory '/' currentSubj]);
-load([currentSubjDir '/' sparsity '/' currentSubj '' 'metrics.mat']); %Matrix file containing information of each subject
+load([currentSubjDir '/' int2str(sparsity) '/' currentSubj '' 'metrics.mat']); %Matrix file containing information of each subject
 output(:,:,s) = SubjStruct.thr; %Matlab field representing connectivity matrix
 end
 

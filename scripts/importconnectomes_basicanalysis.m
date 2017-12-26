@@ -1,4 +1,4 @@
-function importconnectomes_basicanalysis(parcnum, parcname, thr, sparsity)
+function importconnectomes_basicanalysis(parcnum, parcname, thr, sparsity, varargin)
 %Import connectome reps into one single structure for every subject
 %Using new functions available within latest MRtrix package
 %Alistair Perry, UNSW (2014)
@@ -63,8 +63,18 @@ for s = 1:length(subFolders)
             end
         end
         
-         
+    if ~isempty(varargin)
+
+    normtype=varargin{1};   
+    
+    SubjStruct.thr = threshold_proportional(['SubjStruct.ORG' normtype], (sparsity./100));
+        
+    else
+        
     SubjStruct.thr = threshold_proportional(SubjStruct.ORGinv, (sparsity./100));
+    
+    end
+    
     SubjStruct.CIJ = weight_conversion(SubjStruct.thr, 'binarize');   
     
     save([currentSubjDir '/' outdirname '/' currentSubj '' 'metrics.mat'], 'SubjStruct');
