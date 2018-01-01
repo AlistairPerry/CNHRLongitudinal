@@ -111,9 +111,6 @@ for i = 1:length(nbs.NBS.con_mat(1,:))
     
     %ax.XTickLabel=[GP1T1label, GP1T2label, GP2T1label, GP2T2label];
     
-    savefig([baseoutputstring '_N' int2str(i) '_basicstats.fig']);
-    saveas(gcf, [baseoutputstring '_N' int2str(i) '_basicstats.tif'],'tiffn');
-    
     hold off
     
     %distribution plots for each group and time point
@@ -135,9 +132,6 @@ for i = 1:length(nbs.NBS.con_mat(1,:))
     ax.FontSize = 12;
     
     hold off
-    
-    savefig([baseoutputstring '_N' int2str(i) '_distplots.fig']);
-    saveas(gcf, [baseoutputstring '_N' int2str(i) '_distplots.tif'],'tiffn');
     
     figure
     hold on
@@ -167,7 +161,7 @@ for i = 1:length(nbs.NBS.con_mat(1,:))
     ax.FontSize = 12;
     
     savefig([baseoutputstring '_N' int2str(i) '_agetrajectories.fig']);
-    saveas(gcf, [baseoutputstring '_N' int2str(i) '_agetrajectories.tif'],'tiffn');
+    saveas(gcf, [baseoutputstring '_N' int2str(i) '_agetrajectories.tif'],'tiff');
         
     hold off
     
@@ -210,7 +204,7 @@ for i = 1:length(nbs.NBS.con_mat(1,:))
     legend('show',GP1T1label,GP1T2label,GP2T1label,GP2T2label,'Location','SouthWest','boxoff')
     
     savefig([baseoutputstring '_N' int2str(i) '_agequadratics.fig']);
-    saveas(gcf, [baseoutputstring '_N' int2str(i) '_agequadratics.tif'],'tiffn');
+    saveas(gcf, [baseoutputstring '_N' int2str(i) '_agequadratics.tif'],'tiff');
     
     hold off
 end
