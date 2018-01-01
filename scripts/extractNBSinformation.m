@@ -1,11 +1,11 @@
-function [NBSweightssum]=extractNBSinformation(nbsfile, connectivitymatrices, parcstrings, COG, basefilename, varargin)
+function [NBSweightssum]=extractNBSinformation(nbsfile, connectivitymats, parcstrings, COG, basefilename, varargin)
 
 load(nbsfile);
 nbstab = [];
 nbscell = cell(1,2);
 
 parc=length(nbs.NBS.test_stat);
-numsubjs=size(connectivitymatrices,3);
+numsubjs=size(connectivitymats,3);
 
 %extract subject connectivity weights
 
@@ -13,12 +13,30 @@ for i = 1:length(nbs.NBS.con_mat(1,:))
     NBSweights=[];
     [xcol, ycol] = find(nbs.NBS.con_mat{1,i});
     for k = 1:length(xcol)
-        NBSweights(:,k)=squeeze(connectivitymatrices(xcol(k,1),ycol(k,1),:));
+        NBSweights(:,k)=squeeze(connectivitymats(xcol(k,1),ycol(k,1),:));
     end
     NBSweightssum(:,i)=sum(NBSweights,2);
 end
 
 dlmwrite([basefilename '' 'subjweights.txt'], NBSweightssum, 'delimiter', '\t');
+
+%print out connectivity distributions (present or absent) across subjects
+
+imagesc(log10(NBSweights));
+
+set(gca,'box','off')
+
+ylabel('Subject', 'FontSize', 14, 'FontWeight', 'Bold', 'Color', 'black')
+xlabel('Edge', 'FontSize', 14, 'FontWeight', 'Bold', 'Color', 'black')
+
+ax=gca;
+ax.YColor = 'black';
+ax.XColor = 'black';
+ax.FontWeight = 'bold';
+ax.FontSize = 12;
+
+savefig([basefilename '_N' int2str(i) '_edgedist.fig']);
+saveas(gcf, [basefilename '_N' int2str(i) '_edgedist.tif'],'tiff');
 
 %now extract output tables
 
@@ -49,9 +67,9 @@ fclose(fid)
 
 %option to load in apriori information of network nodes
 if ~isempty(varargin)
-
-        nodeindex=varargin{1};
-        netlabels=varargin{2};
+    
+    nodeindex=varargin{1};
+    netlabels=varargin{2};
     
     for i = 1:length(nbs.NBS.con_mat(1,:))
         
@@ -69,12 +87,12 @@ if ~isempty(varargin)
         netNBSmatl=triu(logical(ones(size(netNBSmat))));
         netNBSmat(~netNBSmatl)=nan;
         heatmap(netNBSmat,netlabels,netlabels,'','GridLines','none', 'NanColor',[1 1 1]);
-       
+        
         c=colorbar;
         ylabel(c,'Number of edges');
         
         savefig([basefilename '' int2str(i) 'Net.fig']);
-    
+        
     end
 end
 

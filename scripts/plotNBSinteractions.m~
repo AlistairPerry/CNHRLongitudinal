@@ -21,7 +21,7 @@ function plotNBSinteractions(nbsfile, connectivitymats, grptimeinfo, ages, grpla
 %5. _grplabels_: Group labels identified within cell structure for plotting
 % * For example, for control (CN) and high-risk (HR) groups, {'CN','HR'}
 
-%6. _baseoutputstring_: Base filename information for saved plots
+%6. _baseoutputstring_
 
 %load nbs structure
 load(nbsfile);
@@ -109,10 +109,6 @@ for i = 1:length(nbs.NBS.con_mat(1,:))
     ax.FontWeight = 'bold';
     ax.FontSize = 12;
     
-    savefig([baseoutputstring '_N' int2str(i) '_meansandsem.fig']);
-    saveas(gcf, [baseoutputstring '_N' int2str(i) '_meansandsem.tif'],'tiffn');
-
-    
     %ax.XTickLabel=[GP1T1label, GP1T2label, GP2T1label, GP2T2label];
     
     hold off
@@ -134,9 +130,6 @@ for i = 1:length(nbs.NBS.con_mat(1,:))
     ax.XColor = 'black';
     ax.FontWeight = 'bold';
     ax.FontSize = 12;
-    
-    savefig([baseoutputstring '_N' int2str(i) '_distplots.fig']);
-    saveas(gcf, [baseoutputstring '_N' int2str(i) '_distplots.tif'],'tiffn');
     
     hold off
     
@@ -166,9 +159,6 @@ for i = 1:length(nbs.NBS.con_mat(1,:))
     ax.XColor = 'black';
     ax.FontWeight = 'bold';
     ax.FontSize = 12;
-    
-    savefig([baseoutputstring '_N' int2str(i) '_agetrajectories.fig']);
-    saveas(gcf, [baseoutputstring '_N' int2str(i) '_agetrajectories.tif'],'tiffn');
     
     hold off
     
@@ -209,9 +199,6 @@ for i = 1:length(nbs.NBS.con_mat(1,:))
     ax.FontSize = 12;
     
     legend('show',GP1T1label,GP1T2label,GP2T1label,GP2T2label,'Location','SouthWest','boxoff')
-    
-    savefig([baseoutputstring '_N' int2str(i) '_agequadratics.fig']);
-    saveas(gcf, [baseoutputstring '_N' int2str(i) '_agequadratics.tif'],'tiffn');
     
     hold off
 end
