@@ -1,4 +1,4 @@
-function [NBSweightssum]=extractNBSinformation(nbsfile, connectivitymats, parcstrings, COG, basefilename, varargin)
+function [NBSweightssum]=extractNBSinformation(nbsfile, connectivitymats, parcstrings, COG, baseoutputstring, varargin)
 
 load(nbsfile);
 nbstab = [];
@@ -18,7 +18,7 @@ for i = 1:length(nbs.NBS.con_mat(1,:))
     NBSweightssum(:,i)=sum(NBSweights,2);
 end
 
-dlmwrite([basefilename '' 'subjweights.txt'], NBSweightssum, 'delimiter', '\t');
+dlmwrite([baseoutputstring '' 'subjweights.txt'], NBSweightssum, 'delimiter', '\t');
 
 %print out connectivity distributions (present or absent) across subjects
 
@@ -35,8 +35,8 @@ ax.XColor = 'black';
 ax.FontWeight = 'bold';
 ax.FontSize = 12;
 
-savefig([basefilename '_N' int2str(i) '_edgedist.fig']);
-saveas(gcf, [basefilename '_N' int2str(i) '_edgedist.tif'],'tiff');
+savefig([baseoutputstring '_N' int2str(i) '_edgedist.fig']);
+saveas(gcf, [baseoutputstring '_N' int2str(i) '_edgedist.tif'],'tiff');
 
 %now extract output tables
 
