@@ -59,7 +59,7 @@ for i = 1:length(nbs.NBS.con_mat(1,:))
     end
 end
 
-fid = fopen([basefilename '' 'results.txt'], 'wt');
+fid = fopen([baseoutputstring '' 'results.txt'], 'wt');
 for i = 1:length(nbstab(:,1))
     fprintf(fid, '%d\t%d\t%d\t%s\t%s\n', nbstab(i,1), nbstab(i,2), nbstab(i,3), nbscell{i,1}, nbscell{i,2});
 end
@@ -91,7 +91,7 @@ if ~isempty(varargin)
         c=colorbar;
         ylabel(c,'Number of edges');
         
-        savefig([basefilename '' int2str(i) 'Net.fig']);
+        savefig([baseoutputstring '' int2str(i) 'Net.fig']);
         
     end
 end
@@ -120,6 +120,6 @@ for k = 1:length(xcol)
     fkmtx(iloc,jloc) = 1;
     fkmtx(jloc,iloc) = 1;
 end
-dlmwrite([basefilename '' int2str(i) '' '.edge'], fkmtx, 'delimiter', '\t', 'newline', 'pc');
+dlmwrite([baseoutputstring '' int2str(i) '' '.edge'], fkmtx, 'delimiter', '\t', 'newline', 'pc');
 
 end
