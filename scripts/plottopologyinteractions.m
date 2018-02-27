@@ -37,7 +37,7 @@ GP2T1label=[grplabels{1,2} ' ' 'Base'];
 GP2T2label=[grplabels{1,2} ' ' 'FU'];
 
 %plots for each network identified within particular NBS threshold
-for i = 3:6
+for i = 5:6
     
     TopLabel=char(ConTable.Properties.VariableNames(i));
     %now group topology weights at each time point
