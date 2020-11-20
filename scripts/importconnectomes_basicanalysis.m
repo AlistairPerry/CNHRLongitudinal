@@ -1,7 +1,11 @@
 function importconnectomes_basicanalysis(parcnum, parcname, thr, sparsity, varargin)
-%Import connectome reps into one single structure for every subject
+%Import raw connectomes and perform basic network analyses
+%Based upon data files and forms extracted from MRtrix tck2connectome
 %Using new functions available within latest MRtrix package
 %Alistair Perry, UNSW (2014)
+
+%Input arguments:
+%
 
 workingdirectory = pwd;
 files = dir(workingdirectory);
@@ -21,16 +25,16 @@ for s = 1:length(subFolders)
     if thr==1
     
     countfile = dir(fullfile(currentSubjDir, '*count*'));
-    countmtx = dlmread([currentSubjDir '/' countfile.name]);
+    countmtx = dlmread([currentSubjDir '/' countfile.name], '%f', 0, 0, [0 0 (parcnum-1) (parcnum-1)]);
     
     invcountfile = dir(fullfile(currentSubjDir, '*invlengths*'));
-    invcountmtx = dlmread([currentSubjDir '/' invcountfile.name]);
+    invcountmtx = dlmread([currentSubjDir '/' invcountfile.name], '%f', 0, 0, [0 0 (parcnum-1) (parcnum-1)]);
     
-    invnodelengthfile = dir(fullfile(currentSubjDir, '*invnodeandlengths*'));
-    invnodelengthmtx = dlmread([currentSubjDir '/' invnodelengthfile.name]);
+%     invnodelengthfile = dir(fullfile(currentSubjDir, '*invnodeandlengths*'));
+%     invnodelengthmtx = dlmread([currentSubjDir '/' invnodelengthfile.name]);
     
     lengthfile = dir(fullfile(currentSubjDir, '*tracklengths*'));
-    lengthmtx = dlmread([currentSubjDir '/' lengthfile.name]);
+    lengthmtx = dlmread([currentSubjDir '/' lengthfile.name], '%f', 0, 0, [0 0 (parcnum-1) (parcnum-1)]);
     
     %parcload = load_untouch_nii([commondir '/' currentSubj '/' parcname '.nii']); 
     
@@ -40,7 +44,7 @@ for s = 1:length(subFolders)
         countmtx(j,i) = countmtx(i,j);
         lengthmtx(j,i) = lengthmtx(i,j);
         invcountmtx(j,i)=invcountmtx(i,j);
-        invnodelengthmtx(j,i)=invnodelengthmtx(i,j);
+%         invnodelengthmtx(j,i)=invnodelengthmtx(i,j);
         end
     end
     
@@ -48,7 +52,7 @@ for s = 1:length(subFolders)
     
     SubjStruct.ORG=countmtx;
     SubjStruct.ORGinv=invcountmtx;
-    SubjStruct.ORGinvnodelength=invnodelengthmtx;
+%     SubjStruct.ORGinvnodelength=invnodelengthmtx;
     SubjStruct.tckdistmat=lengthmtx;
     
     %BrainMask = load_untouch_nii([currentSubjDir '/' 'biasb0brain_mask.nii']);
@@ -114,16 +118,19 @@ for s = 1:length(subFolders)
     SubjStruct.CCOEFF = clustering_coef_bu(SubjStruct.CIJ);
     SubjStruct.avgCCOEFF = mean(SubjStruct.CCOEFF);
     
+    %Communicability
+    
+    COMM = communicability_bu(SubjStruct.CIJ);
+    SubjStruct.TCOMM = sum(sum(triu(COMM)));
+    
     %Distance Calcs
     numbercon = nnz(SubjStruct.CIJ);
     SubjStruct.totalDists = sum(sum(SubjStruct.thrdistmat));
     SubjStruct.MAD = SubjStruct.totalDists./numbercon;
-    
+     
     fprintf('\n %s completed \n' , currentSubj);
     
     %Save output
     save([currentSubjDir '/' outdirname '/' currentSubj '' 'metrics.mat'], 'SubjStruct');
 end
 end
-
-
