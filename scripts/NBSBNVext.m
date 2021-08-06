@@ -1,4 +1,5 @@
 function NBSBNVext(nbsfile, basefname, COG, ParcNetIndex)
+%Extract significant NBS network for visualisation in BrainNet Viewer
 
 load(nbsfile);
 

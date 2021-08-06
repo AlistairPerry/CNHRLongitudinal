@@ -4,8 +4,6 @@ function importconnectomes_basicanalysis(parcnum, parcname, thr, sparsity, varar
 %Using new functions available within latest MRtrix package
 %Alistair Perry, UNSW (2014)
 
-%Input arguments:
-%
 
 workingdirectory = pwd;
 files = dir(workingdirectory);
