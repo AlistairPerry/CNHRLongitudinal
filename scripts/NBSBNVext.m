@@ -1,17 +1,23 @@
 function NBSBNVext(nbsfile, basefname, COG, ParcNetIndex)
 %Extract significant NBS network for visualisation in BrainNet Viewer
 
+%Inputs
+%nbsfile: file generated from NBS
+%basefname: string used for output
+%COG: Coordinates of parcellation nodes in .mat format
+%ParcNetIndex: Functional affiliation of parcellation nodes (i.e. Yeo7 +
+%subcortical)
+
+
 load(nbsfile);
 
-
+%Output Directory
 FigOutDIR = '/Users/alistairp/Documents/Brisbane/CNHRLongitudinal_dropbox/NBS_Time/Plots';
 
 
-%Create output for BNV
+%For each sig subnetwork define nodes and their connections
 
-%subnetworks
-%nodes
-
+%Nodes
 for i = 1:length(nbs.NBS.con_mat(1,:))
     [xcol, ycol] = find(nbs.NBS.con_mat{1,i});
     nodes = cat(1,xcol,ycol);
@@ -24,7 +30,7 @@ for i = 1:length(nbs.NBS.con_mat(1,:))
 end
 fclose(fid)
 
-%edges
+%Edges
 fkmtx = zeros(length(xcol),length(xcol));
 for k = 1:length(xcol)
     [iloc,~] = find(xcol(k,1)==nodes);
@@ -35,3 +41,5 @@ end
 dlmwrite([FigOutDIR '/' basefname '_N' int2str(i) '' '.edge'], fkmtx, 'delimiter', '\t', 'newline', 'pc');
 
 end
+
+%Finished

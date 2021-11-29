@@ -1,9 +1,17 @@
 function importconnectomes_basicanalysis(parcnum, parcname, thr, sparsity, varargin)
 %Import raw connectomes and perform basic network analyses
 %Based upon data files and forms extracted from MRtrix tck2connectome
+%Loads in raw track counts, inverted counts (for distance), and track
+%lengths
 %Using new functions available within latest MRtrix package
-%Alistair Perry, UNSW (2014)
+%Alistair Perry, University of Cambridge (2021)
 
+
+%Note, this is used for generating over connectome structure but not in any
+%subsequent analysis
+
+
+%Run function from directory containing all scans to be analysed
 
 workingdirectory = pwd;
 files = dir(workingdirectory);
@@ -11,6 +19,8 @@ dirFlags=[files.isdir];
 subFolders=files(dirFlags);
 subFolders(1:2)=[];
 
+
+%Loop through all subjects
 for s = 1:length(subFolders)
     currentSubj= subFolders(s,1).name;
     currentSubjDir = char([workingdirectory '/' currentSubj]);
@@ -21,66 +31,64 @@ for s = 1:length(subFolders)
     mkdir([currentSubjDir '/' outdirname]);
     
     if thr==1
-    
-    countfile = dir(fullfile(currentSubjDir, '*count*'));
-    countmtx = dlmread([currentSubjDir '/' countfile.name], '%f', 0, 0, [0 0 (parcnum-1) (parcnum-1)]);
-    
-    invcountfile = dir(fullfile(currentSubjDir, '*invlengths*'));
-    invcountmtx = dlmread([currentSubjDir '/' invcountfile.name], '%f', 0, 0, [0 0 (parcnum-1) (parcnum-1)]);
-    
-%     invnodelengthfile = dir(fullfile(currentSubjDir, '*invnodeandlengths*'));
-%     invnodelengthmtx = dlmread([currentSubjDir '/' invnodelengthfile.name]);
-    
-    lengthfile = dir(fullfile(currentSubjDir, '*tracklengths*'));
-    lengthmtx = dlmread([currentSubjDir '/' lengthfile.name], '%f', 0, 0, [0 0 (parcnum-1) (parcnum-1)]);
-    
-    %parcload = load_untouch_nii([commondir '/' currentSubj '/' parcname '.nii']); 
-    
-    for i = 1:parcnum
-        for j = i+1:parcnum
-            if i == parcnum break; end
-        countmtx(j,i) = countmtx(i,j);
-        lengthmtx(j,i) = lengthmtx(i,j);
-        invcountmtx(j,i)=invcountmtx(i,j);
-%         invnodelengthmtx(j,i)=invnodelengthmtx(i,j);
+        
+        %Raw connectome weights
+        countfile = dir(fullfile(currentSubjDir, '*count*'));
+        countmtx = dlmread([currentSubjDir '/' countfile.name], '%f', 0, 0, [0 0 (parcnum-1) (parcnum-1)]);
+        
+        %Inverted weights
+        invcountfile = dir(fullfile(currentSubjDir, '*invlengths*'));
+        invcountmtx = dlmread([currentSubjDir '/' invcountfile.name], '%f', 0, 0, [0 0 (parcnum-1) (parcnum-1)]);
+        
+        %Physical fiber lengths
+        lengthfile = dir(fullfile(currentSubjDir, '*tracklengths*'));
+        lengthmtx = dlmread([currentSubjDir '/' lengthfile.name], '%f', 0, 0, [0 0 (parcnum-1) (parcnum-1)]);
+                
+        for i = 1:parcnum
+            for j = i+1:parcnum
+                if i == parcnum break; end
+                countmtx(j,i) = countmtx(i,j);
+                lengthmtx(j,i) = lengthmtx(i,j);
+                invcountmtx(j,i)=invcountmtx(i,j);
+            end
         end
-    end
-    
-    SubjStruct=struct;
-    
-    SubjStruct.ORG=countmtx;
-    SubjStruct.ORGinv=invcountmtx;
-%     SubjStruct.ORGinvnodelength=invnodelengthmtx;
-    SubjStruct.tckdistmat=lengthmtx;
-    
-    %BrainMask = load_untouch_nii([currentSubjDir '/' 'biasb0brain_mask.nii']);
-    %SubjStruct.BrainSize = numel(find(BrainMask.img~=0));
-    
-    [rois, ~] = extract_roi([currentSubjDir '/' parcname '' '.nii']);
-    SubjStruct.distmat = zeros(parcnum, parcnum);
+        
+        
+        %Start to build connectome structure output
+        SubjStruct=struct;
+        
+        SubjStruct.ORG=countmtx;
+        SubjStruct.ORGinv=invcountmtx;
+        SubjStruct.tckdistmat=lengthmtx;
+        
+        
+        [rois, ~] = extract_roi([currentSubjDir '/' parcname '' '.nii']);
+        SubjStruct.distmat = zeros(parcnum, parcnum);
         
         for i = 1:parcnum
             for j = 1:parcnum
                 SubjStruct.distmat(j, i) = sqrt(abs([(rois(i,1)-rois(j,1))*(rois(i,1)-rois(j,1))]+[(rois(i,2)-rois(j,2))*(rois(i,2)-rois(j,2))]+[(rois(i,3)-rois(j,3))*(rois(i,3)-rois(j,3))]));
             end
         end
+       
         
-    if ~isempty(varargin)
-
-    normtype=varargin{1};   
-    
-    SubjStruct.thr = threshold_proportional(SubjStruct.(normtype), (sparsity./100));
+        %IF thresholding connectome to traditional proportional approach
+        if ~isempty(varargin)
+            
+            normtype=varargin{1};
+            
+            SubjStruct.thr = threshold_proportional(SubjStruct.(normtype), (sparsity./100));
+            
+        else
+            
+            SubjStruct.thr = threshold_proportional(SubjStruct.ORGinv, (sparsity./100));
+            
+        end
         
-    else
+        SubjStruct.CIJ = weight_conversion(SubjStruct.thr, 'binarize');
         
-    SubjStruct.thr = threshold_proportional(SubjStruct.ORGinv, (sparsity./100));
-    
-    end
-    
-    SubjStruct.CIJ = weight_conversion(SubjStruct.thr, 'binarize');   
-    
-    save([currentSubjDir '/' outdirname '/' currentSubj '' 'metrics.mat'], 'SubjStruct');
-    
+        save([currentSubjDir '/' outdirname '/' currentSubj '' 'metrics.mat'], 'SubjStruct');
+        
     end
     
     load([currentSubjDir '/' outdirname '/' currentSubj  '' 'metrics.mat']);
@@ -94,11 +102,11 @@ for s = 1:length(subFolders)
                 SubjStruct.thrdistmat(j,i) = SubjStruct.tckdistmat(j,i);
             end
         end
-    end    
+    end
     
     SubjStruct.numfibers = sum(sum(SubjStruct.ORGinv));
-       
-    %Basic nodal connectivity info
+    
+    %% Basic nodal connectivity info
     SubjStruct.DEG = degrees_und(SubjStruct.CIJ);
     SubjStruct.STR = strengths_und(SubjStruct.thr);
     SubjStruct.BETC = betweenness_bin(SubjStruct.thr);
@@ -125,10 +133,11 @@ for s = 1:length(subFolders)
     numbercon = nnz(SubjStruct.CIJ);
     SubjStruct.totalDists = sum(sum(SubjStruct.thrdistmat));
     SubjStruct.MAD = SubjStruct.totalDists./numbercon;
-     
+    
     fprintf('\n %s completed \n' , currentSubj);
     
     %Save output
     save([currentSubjDir '/' outdirname '/' currentSubj '' 'metrics.mat'], 'SubjStruct');
+    
 end
 end

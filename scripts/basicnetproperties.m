@@ -1,12 +1,16 @@
 function basicnetproperties(connectivitymats)
-%Calculate basic network properties
+%Calculate very basic network properties
 %Calculate total strength and network density from raw connectomes
 
+%Inputs
+%connectivitymats = Either unthresholded or consistency-thresholded
+%connectomes of all subjects and both imaging time points
 
 nscans = size(connectivitymats,3);
 
 nparcs = 512;
 
+%Set output dir
 
 OUTDIR = '/Users/alistairp/Documents/Brisbane/CNHRLongitudinal_dropbox/Misc';
 

@@ -1,8 +1,11 @@
 %Create example brain visualisation of controllability calculations
 %Forms Fig 3A in Roberts/Perry et al (in prep)
 
+%Saves output in BrainNetViewer format
+
 
 %% Panel A
+%Derive consistency matrix to define representative (sparse) anatomical connectome
 
 %Edges
 W_thr = threshold_consistency(allsubjsnothr, 0.05);
@@ -17,11 +20,16 @@ for i = 1:512
     end
 end
 
+
+%Save connections of left hemisphere only
+
 Net_panelB_LH = Net_panelB(1:256,1:256);
 
 dlmwrite('LIFG_net5%cons_indentcons_LHonly.edge', Net_panelB_LH, 'delimiter', '\t', 'newline', 'pc');
 
-%Node
+
+%And left hemisphere nodes
+%Point to coordinate file in github repos
 COGfile = '/Users/alistairp/Documents/Brisbane/CNHRLongitudinal_dropbox/Data/COGnew.mat';
 
 load(COGfile)
@@ -43,6 +51,7 @@ fclose(fid);
 
 
 %% Panel B
+%No longer used
 
 nodecol = ones(256,1);
 nodesz = ones(256,1);
@@ -68,7 +77,8 @@ end
 fclose(fid);
 
 
-%% Panel C
+%% Panel B
+%Physical connections in NBS interaction network
 
 Net_panelC = W_thr; 
 Net_panelC(Net_panelC~=0) = 0.5;
@@ -76,9 +86,12 @@ Net_panelC(Net_panelC~=0) = 0.5;
 Net_panelC_LHonly = Net_panelC(1:256,1:256);
 
 
+%Output from NBS
 nbsfile = '/Users/alistairp/Documents/Brisbane/CNHRLongitudinal_dropbox/NBS_interaction/NBS_output/Without_age_as_covariate/10%cons_5000p_InteractionNegativeAgeRemovedCovariateTh3.mat';
 load(nbsfile);
 
+
+%Derive nodes and connections in network
 
 [xcol, ycol] = find(nbs.NBS.con_mat{1,1});
 
@@ -113,7 +126,7 @@ Net_panelC_LHonly_plusNBSnet = Net_panelC_LHonly + NBSnet;
 dlmwrite('LIFG_net5%cons_indentcons_LHonly_plusNBSnet.edge', Net_panelC_LHonly_plusNBSnet, 'delimiter', '\t', 'newline', 'pc');
 
 
-%Node attributes
+%Write node attributes
 
 nodecol = ones(256,1);
 
@@ -137,3 +150,5 @@ for j = 1:256
 end
 fclose(fid);
 
+
+%Finished
